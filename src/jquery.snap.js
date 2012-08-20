@@ -4,7 +4,7 @@
  * Copyright 2012, Senthil Padmanabhan
  * Released under the MIT License
  * TODO
- * 1. remove webkit prefix
+ * 1. click icon
  * 2. test various scenarios
  * 3. arrow to indicate user to click yes for camera
  * 
@@ -20,6 +20,20 @@
 	var DEFAULT_AVATAR_ICON = 'http://i.ebayimg.com/00/s/MTEyWDE1MA==/$T2eC16hHJHoE9n3KhWjoBQMcCKc!(w~~60_14.JPG',
 		DEFAULT_CAMERA_ICON = 'http://i.ebayimg.com/00/s/NTc1WDU4MA==/$T2eC16Z,!ysE9sy0i2WDBQMcTZp8ew~~60_14.JPG',
 		DEFAULT_BIGGER_DIMENSION = 64, // The bigger dimension of the image
+		/**
+	     * A static utility function which replaces %p of the provided string with vendor prefixes  
+	     * 
+	     * @method PREFIXED 
+	     * @param {String} style The style string which should be vendor prefixed
+	     * @private
+	     */			
+		PREFIXED = function(style) {
+			var prefixedStyle = [];
+			['-webkit-', '-moz-', '-o-', '-ms-', ''].forEach(function(prefix) {
+				prefixedStyle.push(style.replace(/%p/g, prefix));
+			});
+			return prefixedStyle.join('');
+		},
 		// Creating a rondom number to append to ID newly created DOM nodes
 		// avoids namespace conflicts
 		RANDOM = Math.floor((Math.random() * 100)), 
@@ -33,12 +47,7 @@
 							+ '<video style="padding: 10px 20px;width:460px;" autoplay title="Click camera below when ready"></video>'
 							+ '<canvas style="display:none"></canvas>'
 							+ '</div>'
-							+ '<div style="position: absolute;bottom: 0;border: 1px solid #BBBBBB;height: 40px;width:99.7%;background-color: #D7D7D7;' 
-							+ 'background: -webkit-linear-gradient(top, #FFFFFF, #D7D7D7);'
-							+ 'background: -moz-linear-gradient(top, #FFFFFF, #D7D7D7);'
-							+ 'background: -o-linear-gradient(top, #FFFFFF, #D7D7D7);'
-							+ 'background: -ms-linear-gradient(top, #FFFFFF, #D7D7D7);'
-							+ 'background: linear-gradient(top, #FFFFFF, #D7D7D7);">'
+							+ '<div style="position: absolute;bottom: 0;border: 1px solid #BBBBBB;height: 40px;width:99.7%;background-color: #D7D7D7;' + PREFIXED('background: %plinear-gradient(top, #FFFFFF, #D7D7D7);') + '">' 
 							+ '<div title="Click to snap" class="icam" style="cursor:pointer;width: 70px;height: 30px;margin: 4px auto;border: 1px solid #BBBBBB;border-radius: 15%;"></div>'							
 							+ '</div>'
 							+ '</div>'
