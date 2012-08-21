@@ -27,6 +27,11 @@
 	     */			
 		PREFIXED = function(style) {
 			var prefixedStyle = [];
+			// Check for forEach API first
+			if(typeof prefixedStyle.forEach == 'undefined') {
+				prefixedStyle.push(style.replace(/%p/g, ''));
+				return prefixedStyle.join('');	
+			}
 			['-webkit-', '-moz-', '-o-', '-ms-', ''].forEach(function(prefix) {
 				prefixedStyle.push(style.replace(/%p/g, prefix));
 			});
@@ -68,7 +73,8 @@
 				lConfig = config || {}, // Caching locally
 				avatarIcon = lConfig.avatarIcon || DEFAULT_AVATAR_ICON,
 				cameraIcon = lConfig.cameraIcon || DEFAULT_CAMERA_ICON,
-				errMsg = lConfig.errMsg || ERROR_MSG,
+				errorMessage = lConfig.errorMessage || ERROR_MSG,
+				errorSelector = lConfig.errorSelector,
 				getBackgroundStyle = function(imageUrl) {
 					return 'url(\''+ imageUrl + '\') no-repeat 50% 50%';
 				},
@@ -162,7 +168,7 @@
 						// Creating a clone 
 						// 1. This avoids reflows when setting the styles
 						// 2. Events are un-bound
-						masterJClone = masterJElem.clone(),											
+						masterJClone = masterJElem.clone(true), // deep clone											
 						imgSrc;
 					
 					// Draw image from context
@@ -172,7 +178,6 @@
 					// Set the style to have image as background
 					masterJClone.css('background', getBackgroundStyle(imgSrc));
 					masterJClone.css('background-size', w + 'px');
-					masterJClone.css('cursor', 'auto');
 					
 					// Replace the clone with the main div
 					masterJElem.replaceWith(masterJClone);
@@ -190,12 +195,17 @@
 					hideVideo();
 					
 					// If user denied access just return without disabling the element
+					// Error handling codes not fully implemented by browsers
 					if(err && err.code === 1) {
-						return;
+						// TODO
 					}
-					// Fill the error & update the master element
-					$(masterElem).text(errMsg);
-					$(masterElem).attr("style", "background: none; color: red; cursor: auto;");
+					if(errorSelector) {
+						$(errorSelector).show();
+					} else {
+						// Fill the error & update the master element
+						$(masterElem).text(errorMessage);
+						$(masterElem).attr("style", "background: none; color: red;cursor: pointer;");
+					}
 				},			
 				/**
 			     * Streams camera to the vdieo elem 
@@ -216,6 +226,10 @@
 							canvasElem.width = videoElem.videoWidth;
 						};
 					
+					// Creating a dummy stop function on stream to avoid Opera errors
+					if(!stream.stop) { 
+						stream.stop = function() {}; // Opera
+					}
 					// Create the DOM markup for mask, video overlay and canvas
 					createMarkupAndBindEvents(stream, masterElem);	
 						
@@ -235,7 +249,7 @@
 					// If video ended, treat it as user stopped
 					videoElem.onended = function(e) {
 						stream.stop();
-						noStream({code: 1}, masterElem);
+						noStream(e, masterElem);
 					};
 
 					videoElem.onloadedmetadata = function(e) { // Not firing in Chrome. See crbug.com/110938.
@@ -260,6 +274,8 @@
 			     */									
 				initCamera = function() {
 					var elem = this;
+					// Hide the error selector in case it is already displayed
+					errorSelector && $(errorSelector).hide();
 					n.getUserMedia({video: true}, function(stream) {
 						gotStream(stream, elem);
 					}, function(err) {						
