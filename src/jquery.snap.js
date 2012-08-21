@@ -3,10 +3,8 @@
  *
  * Copyright 2012, Senthil Padmanabhan
  * Released under the MIT License
- * TODO
- * 1. click icon
- * 2. test various scenarios
  * 3. arrow to indicate user to click yes for camera
+ * Assumed the page has a body element
  * 
  */
 !function($, window){	
@@ -47,8 +45,10 @@
 							+ '<video style="padding: 10px 20px;width:460px;" autoplay title="Click camera below when ready"></video>'
 							+ '<canvas style="display:none"></canvas>'
 							+ '</div>'
-							+ '<div style="position: absolute;bottom: 0;border: 1px solid #BBBBBB;height: 40px;width:99.7%;background-color: #D7D7D7;' + PREFIXED('background: %plinear-gradient(top, #FFFFFF, #D7D7D7);') + '">' 
-							+ '<div title="Click to snap" class="icam" style="cursor:pointer;width: 70px;height: 30px;margin: 4px auto;border: 1px solid #BBBBBB;border-radius: 15%;"></div>'							
+							+ '<div style="position: absolute;bottom: 0;border: 1px solid #BBBBBB;height: 50px;width:99.7%;background-color: #D7D7D7;' + PREFIXED('background: %plinear-gradient(top, #FFFFFF, #D7D7D7);') + '">' 
+							+ '<div title="Click to snap" class="icam" style="cursor:pointer;width: 60px;height: 40px;margin: 4px auto;border: 1px solid #BBBBBB;border-radius: 15%;">'
+							+ '<div style="background: #000;width:20px;height:5px;margin: 5px auto 0;"></div><div style="width:40px;height:15px;background:#000;margin:0 auto 5px;padding: 5px 0;"><div style="background: #FFF;border-radius: 50%;width: 23px;height:15px;margin: 0 auto;"></div></div>'
+							+ '</div>'							
 							+ '</div>'
 							+ '</div>'
 		},
@@ -102,47 +102,52 @@
 				hideVideo = function() {
 					// Hide the mask & video container if available
 					maskJElem && maskJElem.hide();
-					videoContainerJElem && videoContainerJElem.hide();						
+					if(videoContainerJElem){
+						videoContainerJElem.hide();
+						// Detaching the events
+						videoContainerJElem.undelegate('click');
+						$(document).undelegate('.snapvideo');
+					} 						
 				},
 				createMarkupAndBindEvents = function(stream, masterElem) {
 					var videoContainerId = '#' + VIDEO_CONTAINER_ID,
-					captureHandler = function() {
-						// Hide the video
-						hideVideo();
-						// Capture the image
-						capture(masterElem);
-						// Stop the stream
-						stream.stop();								
-					},
-					closeHandler = function() {
-						// Hide the video
-						hideVideo();
-						// Stop the stream
-						stream.stop();
-					};					
+						captureHandler = function() {
+							// Hide the video
+							hideVideo();
+							// Capture the image
+							capture(masterElem);
+							// Stop the stream
+							stream.stop();								
+						},
+						closeHandler = function() {
+							// Hide the video
+							hideVideo();
+							// Stop the stream
+							stream.stop();
+						};					
 					// create the mask and video elements if not present
 					if(!maskJElem) {
 						$('body').append(TEMPLATES.mask);
 						maskJElem = $('#' + MASK_ID);
-					}
-					
+					}					
 					if(!videoContainerJElem) {
 						$('body').append(TEMPLATES.videoContainer);
 						videoContainerJElem = $(videoContainerId);
 						videoElem = $(videoContainerId + ' video').get(0);
 						canvasElem = $(videoContainerId + ' canvas').get(0);
-						canvasCtx = canvasElem.getContext('2d');
-						// Attach capture event
-						$(videoContainerId + ' .icam').click(captureHandler);
-						// Attach close event
-						$(videoContainerId + ' .iclose').click(closeHandler);	
-						// Attach esc event
-						$(document).keydown(function(event){
-							if(event.which === 27) {
-								closeHandler();
-							}
-						});
-					}					
+						canvasCtx = canvasElem.getContext('2d');						
+					}
+					// Attach events - this has to be done everytime to bind events to the actual master element
+					// Attach capture event
+					videoContainerJElem.delegate(videoContainerId + ' .icam', 'click', captureHandler);
+					// Attach close event
+					videoContainerJElem.delegate(videoContainerId + ' .iclose', 'click', closeHandler);		
+					// Attach esc event
+					$(document).delegate('body', 'keydown.snapvideo', function(event){
+						if(event.which === 27) {
+							closeHandler();
+						}
+					});										
 				},
 				/**
 			     * Captures the current stream and creates an image 
@@ -170,7 +175,7 @@
 					masterJClone.css('cursor', 'auto');
 					
 					// Replace the clone with the main div
-					masterJElem.replaceWith(masterJClone);					
+					masterJElem.replaceWith(masterJClone);
 				},
 				/**
 			     * Handle streaming errors

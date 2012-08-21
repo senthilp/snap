@@ -16,7 +16,7 @@
 		.main {
 			width: 990px;
 			text-align: center;
-			padding-top: 300px;
+			padding-top: 5px;
 		}
 		@media (min-width: 1200px) {
 			.main {
@@ -28,19 +28,25 @@
 			width: 120px;
 			border: 1px solid #CCC;
 			border-radius: 3px;
-			margin: 0 auto;
+			margin: 50px auto 0;
 		}
 	</style>
 </head>
 <body>
 	<div class="main">
 		<div class="avatar"></div>
+		<div class="avatar"></div>
+		<p class="avatar"></p>
 	</div>
 	<script src="/snap/lib/jquery-1.8.0.min.js"></script>
 	<script src="/snap/src/jquery.snap.js"></script>
 	<script>
 		(function() {
-			$('.avatar').snap();
+			$('div.avatar').snap();
+			$('p.avatar').snap({
+				avatarIcon: 'http://p.ebaystatic.com/aw/pics/s.gif',
+				cameraIcon: 'http://thumbs2.ebaystatic.com/pict/1907167068094040_1.jpg'
+			});
 		})();
 	</script>	
 </body>
