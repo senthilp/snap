@@ -33,24 +33,56 @@
 		.hide {
 			display: none;
 		}
+		.status {
+			position: absolute;
+			left: 20px;
+			top: 20px;
+			font-size: 18px;
+			font-weight: bold;
+			color: brown;
+		}
 	</style>
 </head>
 <body>
 	<div class="main">
 		<div class="avatar"></div>
-		<div class="avatar"></div>
-		<p class="avatar"></p>
-		<div class="error hide">There was a problem with your camera</div>
+		<div class="avatar"></div>		
+		<p class="avatar third"></p>
+		<div class="error hide">There was a problem with your camera</div>		
+		<p class="avatar last"></p>
 	</div>
+	<div class="status"></div>
 	<script src="/snap/lib/jquery-1.8.0.min.js"></script>
 	<script src="/snap/src/jquery.snap.js"></script>
 	<script>
 		(function() {
 			$('div.avatar').snap();
-			$('p.avatar').snap({
+			$('p.third').snap({
+				url: '/picman/upload.php',
+				callbacks: {
+					successCallback: function() {
+						$('.status').text('Image upload is successful');
+					},
+					failureCallback: function() {
+						$('.status').text('Image upload failed');
+					}
+				},	
+				imageType: 'image/png',
 				errorSelector: '.error', 
+				waitMessage: 'Please wait...',
 				avatarIcon: 'http://p.ebaystatic.com/aw/pics/s.gif',
 				cameraIcon: 'http://thumbs2.ebaystatic.com/pict/1907167068094040_1.jpg'
+			});
+			$('p.last').snap({
+				url: '/picman/upload.php',
+				callbacks: {
+					successCallback: function() {
+						$('.status').text('');
+					},				
+					progressCallback: function() {
+						$('.status').text('Image upload WIP');
+					}	
+				}	
 			});
 		})();
 	</script>	

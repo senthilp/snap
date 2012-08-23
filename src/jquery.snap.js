@@ -1,3 +1,84 @@
+/*
+* JavaScript Canvas to Blob 2.0.2
+* https://github.com/blueimp/JavaScript-Canvas-to-Blob
+*
+* Copyright 2012, Sebastian Tschan
+* https://blueimp.net
+*
+* Licensed under the MIT license:
+* http://www.opensource.org/licenses/MIT
+*
+* Based on stackoverflow user Stoive's code snippet:
+* http://stackoverflow.com/q/4998908
+*/
+
+/*jslint nomen: true, regexp: true */
+/*global window, atob, Blob, ArrayBuffer, Uint8Array, define */
+
+(function (window) {
+    'use strict';
+    var CanvasPrototype = window.HTMLCanvasElement &&
+            window.HTMLCanvasElement.prototype,
+        hasBlobConstructor = function () {
+                try {
+                    return !!new Blob();
+                } catch (e) {
+                    return false;
+                }
+            }(),
+        BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder ||
+            window.MozBlobBuilder || window.MSBlobBuilder,
+        dataURLtoBlob = (hasBlobConstructor || BlobBuilder) && window.atob &&
+            window.ArrayBuffer && window.Uint8Array && function (dataURI) {
+                var byteString,
+                    arrayBuffer,
+                    intArray,
+                    i,
+                    bb,
+                    mimeString;
+                if (dataURI.split(',')[0].indexOf('base64') >= 0) {
+                    // Convert base64 to raw binary data held in a string:
+                    byteString = atob(dataURI.split(',')[1]);
+                } else {
+                    // Convert base64/URLEncoded data component to raw binary data:
+                    byteString = decodeURIComponent(dataURI.split(',')[1]);
+                }
+                // Write the bytes of the string to an ArrayBuffer:
+                arrayBuffer = new ArrayBuffer(byteString.length);
+                intArray = new Uint8Array(arrayBuffer);
+                for (i = 0; i < byteString.length; i += 1) {
+                    intArray[i] = byteString.charCodeAt(i);
+                }
+                // Separate out the mime component:
+                mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+                // Write the ArrayBuffer to a blob:
+                if (hasBlobConstructor) {
+                    return new Blob([arrayBuffer], {type: mimeString});
+                }
+                bb = new BlobBuilder();
+                bb.append(arrayBuffer);
+                return bb.getBlob(mimeString);
+            };
+    if (window.HTMLCanvasElement && !CanvasPrototype.toBlob) {
+        if (CanvasPrototype.mozGetAsFile) {
+            CanvasPrototype.toBlob = function (callback, type) {
+                callback(this.mozGetAsFile('blob', type));
+            };
+        } else if (CanvasPrototype.toDataURL && dataURLtoBlob) {
+            CanvasPrototype.toBlob = function (callback, type) {
+                callback(dataURLtoBlob(this.toDataURL(type)));
+            };
+        }
+    }
+    if (typeof define !== 'undefined' && define.amd) {
+        define(function () {
+            return dataURLtoBlob;
+        });
+    } else {
+        window.dataURLtoBlob = dataURLtoBlob;
+    }
+}(this));
+
 /**
  * snap 
  *
@@ -18,6 +99,7 @@
 	var DEFAULT_AVATAR_ICON = 'http://i.ebayimg.com/00/s/MTEyWDE1MA==/$T2eC16hHJHoE9n3KhWjoBQMcCKc!(w~~60_14.JPG',
 		DEFAULT_CAMERA_ICON = 'http://i.ebayimg.com/00/s/NTc1WDU4MA==/$T2eC16Z,!ysE9sy0i2WDBQMcTZp8ew~~60_14.JPG',
 		DEFAULT_BIGGER_DIMENSION = 64, // The bigger dimension of the image
+		IMAGE_TYPE = 'image/png',
 		/**
 	     * A static utility function which replaces %p of the provided string with vendor prefixes  
 	     * 
@@ -58,12 +140,15 @@
 							+ '</div>'
 		},
 		ERROR_MSG = 'Sorry, there was a problem connecting to camera',
+		WAIT_MSG = 'Please wait until the save is comple',
 		// Variables to cache DOM
 		maskJElem,
 		videoContainerJElem,
 		videoElem,
 		canvasElem,
-		canvasCtx;
+		canvasCtx,
+		// A boolean flag to hold the save state of the plugin
+		isSaving = false;
 	
 	$.fn.extend({
 		
@@ -74,7 +159,14 @@
 				avatarIcon = lConfig.avatarIcon || DEFAULT_AVATAR_ICON,
 				cameraIcon = lConfig.cameraIcon || DEFAULT_CAMERA_ICON,
 				errorMessage = lConfig.errorMessage || ERROR_MSG,
+				waitMsg = lConfig.waitMessage || WAIT_MSG,
 				errorSelector = lConfig.errorSelector,
+				callbacks = lConfig.callbacks,
+				successCallback = callbacks && callbacks.successCallback,
+				failureCallback = callbacks && callbacks.failureCallback,
+				progressCallback = callbacks && callbacks.progressCallback,
+				url = lConfig.url,
+				imageType = lConfig.imageType || IMAGE_TYPE,
 				getBackgroundStyle = function(imageUrl) {
 					return 'url(\''+ imageUrl + '\') no-repeat 50% 50%';
 				},
@@ -156,28 +248,98 @@
 					});										
 				},
 				/**
-			     * Captures the current stream and creates an image 
+			     * Saves the image to the server with the provided URL and updates the 
+			     * image in the masterElem   
+			     * 
+			     * @method save 
+			     * @param {node} masterElem The master DOM node which initiated the snap
+			     * @private
+			     */						
+				save = function(masterElem) {
+					var xhr = new XMLHttpRequest(),
+						fileName = 'avatar';
+							        
+			        xhr.onreadystatechange = function(){
+			            if (xhr.readyState == 4){
+			            	// Reset save state
+			            	isSaving = false;
+			            	if (xhr.status == 200){	            		
+			            		updateImage(masterElem);
+			            		// Call success callback if given
+			            		successCallback && successCallback();
+			            	} else {
+			            		noStream({message: 'Call to upload service ' + url + ' failed'}, masterElem);
+			            		// Call failure callback if given
+			            		failureCallback && failureCallback(); 
+			            	}
+			            }
+			        };	
+			        
+			        xhr.open("POST", url + "?picfile=" + fileName, true);
+			        // Headers for file upload
+			        xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+			        xhr.setRequestHeader("X-File-Name", encodeURIComponent(fileName));
+			        xhr.setRequestHeader("Content-Type", "application/octet-stream");	        
+			        canvasElem.toBlob(function(blob) {
+			        	xhr.send(blob);
+			        }, imageType);		
+			        
+			        // Call progress callback if given
+			        if(progressCallback) {
+			        	progressCallback();
+			        } else {
+				        // Update progress status
+				        updateText(masterElem, 'Saving...');	
+			        }
+			        // Set isSaving to true
+			        isSaving = true;			        
+				},
+				/**
+			     * Captures the current image from current stream, saves if needed 
+			     * and updates the master element with the captured image  
 			     * 
 			     * @method capture 
 			     * @param {node} masterElem The master DOM node which initiated the snap
 			     * @private
 			     */						
-				capture = function(masterElem) {
+				capture = function(masterElem) {					
+					// unbinding click event
+					$(masterElem).unbind('click', initCamera);
+					// Draw image from context
+					canvasCtx.drawImage(videoElem, 0, 0);
+					// Check if persistence is needed and save the image
+					if(url) {
+						save(masterElem);
+					} else { 
+						updateImage(masterElem);
+					}
+				},
+				/**
+			     * Updates the image in the master element 
+			     * 
+			     * @method updateImage 
+			     * @param {node} masterElem The master DOM node which initiated the snap
+			     * @private
+			     */						
+				updateImage = function(masterElem) {
 					var masterJElem = $(masterElem),
 						w = masterJElem.data('w') || masterJElem.width(), // Get it from data first
 						// Creating a clone 
 						// 1. This avoids reflows when setting the styles
 						// 2. Events are un-bound
-						masterJClone = masterJElem.clone(true), // deep clone											
+						masterJClone = masterJElem.clone(), // deep clone											
 						imgSrc;
 					
-					// Draw image from context
-					canvasCtx.drawImage(videoElem, 0, 0);
-					imgSrc = canvasElem.toDataURL('image/webp');
+					// Set the image src to the DataUrl
+					imgSrc = canvasElem.toDataURL(imageType);
 
 					// Set the style to have image as background
 					masterJClone.css('background', getBackgroundStyle(imgSrc));
 					masterJClone.css('background-size', w + 'px');
+					// Empty text if any
+					masterJClone.text('');
+					// Attaching click handler
+					masterJClone.click(initCamera);
 					
 					// Replace the clone with the main div
 					masterJElem.replaceWith(masterJClone);
@@ -185,8 +347,22 @@
 				/**
 			     * Handle streaming errors
 			     * 
+			     * @method updateText 
+			     * @param {Node} elem The DOM element whic needs to be updated
+			     * @param {String} text The text to be displayed
+			     * @param {Boolean} isError Flag to indicate is this is error message
+			     *  
+			     * @private
+			     */				
+				updateText = function(elem, text, isError) {
+					$(elem).text(text);
+					$(elem).attr('style', 'background: none; cursor: pointer;' + (isError?'color: red;': ''));
+				},
+				/**
+			     * Handle streaming errors
+			     * 
 			     * @method noStream 
-			     * @param {stream} stream The video stream
+			     * @param {Object} err The error object
 			     * @param {node} masterElem The master DOM node which initiated the snap
 			     * @private
 			     */						
@@ -203,8 +379,7 @@
 						$(errorSelector).show();
 					} else {
 						// Fill the error & update the master element
-						$(masterElem).text(errorMessage);
-						$(masterElem).attr("style", "background: none; color: red;cursor: pointer;");
+						updateText(masterElem, err.message || errorMessage, true)
 					}
 				},			
 				/**
@@ -273,6 +448,11 @@
 			     * @private
 			     */									
 				initCamera = function() {
+					// First Check if any save in progress
+					if(isSaving) {
+						alert(waitMsg);
+						return;
+					}					
 					var elem = this;
 					// Hide the error selector in case it is already displayed
 					errorSelector && $(errorSelector).hide();
