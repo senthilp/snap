@@ -36,6 +36,34 @@ The snap plugin is pretty simple to invoke
         }
       },	
       errorSelector: ".error", 
-      errorMessage: "There was an error connecting to the camera"
+      errorMessage: "There was an error connecting to the camera",
       waitMessage: "Please wait..."
     });
+
+##Options
+###avatarIcon
+**Optional**
+<br/>
+The user avatar icon to display for non supporting browsers, if not provided plugin uses [default](http://i.ebayimg.com/00/s/MTEyWDE1MA==/$T2eC16hHJHoE9n3KhWjoBQMcCKc!(w~~60_14.JPG) 
+user icon 
+###cameraIcon
+**Optional**
+<br/>
+The camera icon to display for supporting browsers, If not provided plugin uses [default](http://i.ebayimg.com/00/s/NTc1WDU4MA==/$T2eC16Z,!ysE9sy0i2WDBQMcTZp8ew~~60_14.JPG) 
+camera icon
+###dimension
+**Optional**
+<br/>
+The square dimension of the container element to be made snapable, default value 64px
+###url
+**Optional**
+<br/>
+The REST url end point to persist (save) the image
+###imageType
+**Optional**
+<br/>
+The type of the image, default value image/png
+###callbacks
+**Optional**
+<br/>
+a JSON for callbacks when the image is been uploaded to the server
