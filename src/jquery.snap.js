@@ -15,25 +15,27 @@
  * also be posted to the server for saving and persistence.
  * 
  * For browsers which do not support navigator.getUserMedia API a default
- * user avatar icon is displayed. 
+ * user avatar icon is displayed. The plugin also assumes that a body element 
+ * is present in the page. 
  * 
  * NOTE: snap plugin depends on a small canvas-to-blob polyfill API 
  * https://github.com/blueimp/JavaScript-Canvas-to-Blob for browsers which
- * do not support the canvas element toBlob native function.
+ * do not support the canvas element toBlob native function. The API is included 
+ * in the plugin itself.
  * 
- * The plugin also assumes that a body element is present in the page.
+ * Please refer index.html for a working demo
  * 
  * The various options of the plugin.   
  * 
  *	{
- * 		avatarIcon: "http://p.ebaystatic.com/aw/pics/s.gif", // Optional, the user avatar icon to display for non supporting users
- * 															 // If not provided plugin uses default icon http://i.ebayimg.com/00/s/MTEyWDE1MA==/$T2eC16hHJHoE9n3KhWjoBQMcCKc!(w~~60_14.JPG	 
+ * 		avatarIcon: "http://p.ebaystatic.com/aw/pics/s.gif", // Optional, the user avatar icon to display for non supporting browsers
+ * 															 // If not provided plugin uses default user icon http://i.ebayimg.com/00/s/MTEyWDE1MA==/$T2eC16hHJHoE9n3KhWjoBQMcCKc!(w~~60_14.JPG	 
  *		cameraIcon: "http://thumbs2.ebaystatic.com/pict/1907167068094040_1.jpg", // Optional, the camera icon to display for supporting browsers
- *															// If not provided plugin uses default icon http://i.ebayimg.com/00/s/NTc1WDU4MA==/$T2eC16Z,!ysE9sy0i2WDBQMcTZp8ew~~60_14.JPG
+ *															// If not provided plugin uses default camera icon http://i.ebayimg.com/00/s/NTc1WDU4MA==/$T2eC16Z,!ysE9sy0i2WDBQMcTZp8ew~~60_14.JPG
  * 		dimension: 70, // Optional, the square dimension of the container element to be made snapable - default value 64px
  *		url: "/picman/upload.php", // Optional, the REST url end point to persist (save) the image
  *		imageType: "image/png", // Optional, the type of the image - default value image/png
- *		callbacks: { // Optional, the callbacks when the image is been uploaded to the server
+ *		callbacks: { // Optional, a JSON for callbacks when the image is been uploaded to the server
  *			successCallback: function() { // Optional, success callback when the image is successfully uploaded
  *				$('.status').text('Image upload is successful');
  *			},
