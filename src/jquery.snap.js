@@ -1,5 +1,5 @@
 /*
-* JavaScript Canvas to Blob 2.0.2
+* JavaScript Canvas to Blob API needed for SNAP
 * https://github.com/blueimp/JavaScript-Canvas-to-Blob
 *
 * Copyright 2012, Sebastian Tschan
@@ -8,12 +8,7 @@
 * Licensed under the MIT license:
 * http://www.opensource.org/licenses/MIT
 *
-* Based on stackoverflow user Stoive's code snippet:
-* http://stackoverflow.com/q/4998908
 */
-
-/*jslint nomen: true, regexp: true */
-/*global window, atob, Blob, ArrayBuffer, Uint8Array, define */
 
 (function (window) {
     'use strict';
@@ -84,9 +79,36 @@
  *
  * Copyright 2012, Senthil Padmanabhan
  * Released under the MIT License
- * 3. arrow to indicate user to click yes for camera
  * Assumed the page has a body element
+ *
+ * snap is a JQuery plugin to make a DOM element snapable i.e. make the element
+ * camera enabled. It uses navigator.get
  * 
+ * The input JSON controls the input feed and the various configurations of
+ * the plugin.   
+ * 
+ *		{
+ *			imageUrls : ["http:\/\/i.img.one.JPG","http:\/\/i.img.two.JPG"], // Mandatory, the list of image URLs to float in 3D. Order is preserved
+ *			dimensions: {"height":300,"width":400,"offset":40}, // Mandatory, JSON encapsulating the height & width of the image. Optional offset parameter
+ *																   to specify the distance between images. Default value is 40px
+ *			opacityVal : 0.9, // Optional, The opacity (amount of transparency) value that should be used on the images. Default value is 0.9	
+ *		    keyboardEvents: true, // Optional, A flag to enable keyboard controls. Default value is false	
+ *									   Left Arrow => Move left
+ *									   Right Arrow => Move right
+ *									   Enter => Start spin
+ *									   esc => Stop spinning					
+ *			nodeSelectors: { // Optional, A JSON object representing various DOM nodes involved with the 3D carousel
+ * 				fallback: '.fallback-message', // Optional, The DOM selector for the fallback message container 
+ *				controls: { // Optional, A JSON object representing the DOM nodes of the carousel navigation controllers 
+ *					container: '.controls', // Optional, The selector for the controls container
+ *					left: '.controls .left', // Optional, The selector for moving the carousel to left  
+ *					right: '.controls .right', // Optional, The selector for moving the carousel to right
+ *					spinner: '.controls .spin', // Optional, The selector for spining the carousel
+ *					cancelSpin: '.controls .cancel' // Optional, The selector for cancelling a spin
+ *				},
+ *				mask: '.controls .mask' // Optional, The selector for the mask layer if any to hide the controls when spinning
+ *			}
+ *		} 	
  */
 !function($, window){	
 	// Mandating ECMAScript 5 strict mode
@@ -125,7 +147,9 @@
 		MASK_ID = 'mask' + RANDOM,
 		VIDEO_CONTAINER_ID = 'vcon' + RANDOM,
 		TEMPLATES = {
-			mask: '<div id="' + MASK_ID + '" style="position: absolute;left: 0;top: 0;width: 100%;height: 100%;background: #CCC;opacity: 0.4;z-index: 999;display: none;"></div>',
+			mask: '<div id="' + MASK_ID + '" style="position: absolute;left: 0;top: 0;width: 100%;height: 100%;background: #EEE;opacity: 0.6;z-index: 999;display: none;">' 
+					+ '<div style="position:absolute;top:50%;left:50%;margin:-23px 0 0 -135px;color:#D52A33;font-weight:bold;font-size:23px;">Please allow camera access.</div>'
+					+ '</div>',
 			videoContainer: '<div id="' + VIDEO_CONTAINER_ID + '" style="position: absolute;height: 400px; width: 500px;left: 50%;top: 25%;margin-left:-250px; background: #000;z-index: 9999;display: none;">'
 							+ '<div style="position:relative">'
 							+ '<span title="Close video" class="iclose" style="display:inline-block;position:absolute;top:11px;right:22px;cursor:pointer;color:red;font: bold 23px Arial,Helvetica,sans-serif;">X</span>'
@@ -161,11 +185,12 @@
 				errorMessage = lConfig.errorMessage || ERROR_MSG,
 				waitMsg = lConfig.waitMessage || WAIT_MSG,
 				errorSelector = lConfig.errorSelector,
+				dimension = lConfig.dimension || DEFAULT_BIGGER_DIMENSION,
 				callbacks = lConfig.callbacks,
 				successCallback = callbacks && callbacks.successCallback,
 				failureCallback = callbacks && callbacks.failureCallback,
 				progressCallback = callbacks && callbacks.progressCallback,
-				url = lConfig.url,
+				url = window.dataURLtoBlob && lConfig.url, // Check if blob supported
 				imageType = lConfig.imageType || IMAGE_TYPE,
 				getBackgroundStyle = function(imageUrl) {
 					return 'url(\''+ imageUrl + '\') no-repeat 50% 50%';
@@ -178,23 +203,28 @@
 			     * @private
 			     */					
 				getIconBgSizeStyle = function(jElem) {
-					var h,
-						w,
+					var h = jElem.height(),
+						w = jElem.width(),
 						bigger, // Getting the bigger dimension
-						isDefaultIcon = avatarIcon === DEFAULT_AVATAR_ICON || cameraIcon === DEFAULT_CAMERA_ICON, // Do calculations only if default icon
+						isDefaultIcon = avatarIcon === DEFAULT_AVATAR_ICON 
+										|| cameraIcon === DEFAULT_CAMERA_ICON
+										|| h === 0
+										|| w === 0, // Do calculations only if default icon or height/width is 0
 						sizeStyle = '';
 
 					// If default icon size bigger than container then return the container size
 					if(isDefaultIcon) {
-						h = jElem.height();
-						w = jElem.width();
+						if(h === 0 || w === 0) {
+							h = w = dimension;
+							sizeStyle += 'height:' + h + 'px; width:' + w + 'px;';
+						}
 						bigger = w > h?w: h; // Getting the bigger dimension
-						// Set the calculated height & width as data attributes to avoid future reflow calculation
-						jElem.data({h: h, w: w});
-						if(DEFAULT_BIGGER_DIMENSION > bigger) {
-							sizeStyle = 'background-size:' + bigger + 'px;';
+						if(DEFAULT_BIGGER_DIMENSION >= bigger) {
+							sizeStyle += 'background-size:' + bigger + 'px;';
 						}
 					}
+					// Set the calculated height & width as data attributes to avoid future reflow calculation
+					jElem.data({h: h, w: w});					
 					return sizeStyle;
 				},
 				hideVideo = function() {
@@ -206,6 +236,14 @@
 						videoContainerJElem.undelegate('click');
 						$(document).undelegate('.snapvideo');
 					} 						
+				},
+				createMask = function() {
+					// create the mask element if not present
+					if(!maskJElem) {
+						$('body').append(TEMPLATES.mask);
+						maskJElem = $('#' + MASK_ID);
+					}								
+					maskJElem.show();
 				},
 				createMarkupAndBindEvents = function(stream, masterElem) {
 					var videoContainerId = '#' + VIDEO_CONTAINER_ID,
@@ -223,11 +261,7 @@
 							// Stop the stream
 							stream.stop();
 						};					
-					// create the mask and video elements if not present
-					if(!maskJElem) {
-						$('body').append(TEMPLATES.mask);
-						maskJElem = $('#' + MASK_ID);
-					}					
+					// create the video element if not present
 					if(!videoContainerJElem) {
 						$('body').append(TEMPLATES.videoContainer);
 						videoContainerJElem = $(videoContainerId);
@@ -355,8 +389,11 @@
 			     * @private
 			     */				
 				updateText = function(elem, text, isError) {
-					$(elem).text(text);
-					$(elem).attr('style', 'background: none; cursor: pointer;' + (isError?'color: red;': ''));
+					var jElem = $(elem);
+					jElem.text(text);
+					jElem.css('background', 'none');
+					jElem.css('cursor', 'pointer');
+					isError && jElem.css('color', 'red');
 				},
 				/**
 			     * Handle streaming errors
@@ -454,6 +491,8 @@
 						return;
 					}					
 					var elem = this;
+					// Show the mask to indicate user to grant camera access 
+					createMask();
 					// Hide the error selector in case it is already displayed
 					errorSelector && $(errorSelector).hide();
 					n.getUserMedia({video: true}, function(stream) {

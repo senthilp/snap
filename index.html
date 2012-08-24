@@ -41,15 +41,19 @@
 			font-weight: bold;
 			color: brown;
 		}
+		.zero {
+			height: 0;
+			width: 0;
+		}
 	</style>
 </head>
 <body>
 	<div class="main">
 		<div class="avatar"></div>
 		<div class="avatar"></div>		
-		<p class="avatar third"></p>
+		<p class="avatar third  zero"></p>
 		<div class="error hide">There was a problem with your camera</div>		
-		<p class="avatar last"></p>
+		<p class="avatar last zero"></p>
 	</div>
 	<div class="status"></div>
 	<script src="/snap/lib/jquery-1.8.0.min.js"></script>
@@ -75,13 +79,14 @@
 			});
 			$('p.last').snap({
 				url: '/picman/upload.php',
+				dimension: 80,
 				callbacks: {
 					successCallback: function() {
 						$('.status').text('');
 					},				
 					progressCallback: function() {
 						$('.status').text('Image upload WIP');
-					}	
+					}
 				}	
 			});
 		})();
