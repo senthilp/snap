@@ -67,3 +67,27 @@ The type of the image, default value image/png
 **Optional**
 <br/>
 a JSON for callbacks when the image is been uploaded to the server
+###successCallback
+**Optional**
+<br/>
+Success callback when the image is successfully uploaded
+###failureCallback
+**Optional**
+<br/>
+Failure callback when the image is upload fails
+###progressCallback
+**Optional**
+<br/>
+Progress callback to be executed when the image is being uploaded
+###errorSelector
+**Optional**
+<br/>
+The error DOM selector to be shown when an error occurs, default the error is shown in the container element
+###errorMessage
+**Optional**
+<br/>
+The error message to be displayed in the container when no errorSelector, default "Sorry, there was a problem connecting to camera"
+###waitMessage
+**Optional**
+<br/>
+The wait message when user clicks to active camera during a picture upload, default "Please wait until the save is complete"
