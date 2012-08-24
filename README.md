@@ -90,4 +90,5 @@ The error message to be displayed in the container when no errorSelector, defaul
 ###waitMessage
 **Optional**
 <br/>
-The wait message when user clicks to active camera during a picture upload, default "Please wait until the save is complete"
+the wait message to be alerted when user clicks to activate camera during a picture upload, default "Please wait until 
+the save is complete"
