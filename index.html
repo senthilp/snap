@@ -62,7 +62,7 @@
 		(function() {
 			$('div.avatar').snap();
 			$('p.third').snap({
-				url: '/picman/upload.php',
+				url: "/picman/upload.php",
 				callbacks: {
 					successCallback: function() {
 						$('.status').text('Image upload is successful');
@@ -71,14 +71,14 @@
 						$('.status').text('Image upload failed');
 					}
 				},	
-				imageType: 'image/png',
-				errorSelector: '.error', 
-				waitMessage: 'Please wait...',
-				avatarIcon: 'http://p.ebaystatic.com/aw/pics/s.gif',
-				cameraIcon: 'http://thumbs2.ebaystatic.com/pict/1907167068094040_1.jpg'
+				imageType: "image/png",
+				errorSelector: ".error", 
+				waitMessage: "Please wait...",
+				avatarIcon: "http://p.ebaystatic.com/aw/pics/s.gif",
+				cameraIcon: "http://thumbs2.ebaystatic.com/pict/1907167068094040_1.jpg"
 			});
 			$('p.last').snap({
-				url: '/picman/upload.php',
+				url: "/picman/upload.php",
 				dimension: 80,
 				callbacks: {
 					successCallback: function() {

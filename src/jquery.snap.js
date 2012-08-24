@@ -23,30 +23,34 @@
  * 
  * The plugin also assumes that a body element is present in the page.
  * 
- * The various configurations of the plugin.   
+ * The various options of the plugin.   
  * 
- *		{
- *			imageUrls : ["http:\/\/i.img.one.JPG","http:\/\/i.img.two.JPG"], // Mandatory, the list of image URLs to float in 3D. Order is preserved
- *			dimensions: {"height":300,"width":400,"offset":40}, // Mandatory, JSON encapsulating the height & width of the image. Optional offset parameter
- *																   to specify the distance between images. Default value is 40px
- *			opacityVal : 0.9, // Optional, The opacity (amount of transparency) value that should be used on the images. Default value is 0.9	
- *		    keyboardEvents: true, // Optional, A flag to enable keyboard controls. Default value is false	
- *									   Left Arrow => Move left
- *									   Right Arrow => Move right
- *									   Enter => Start spin
- *									   esc => Stop spinning					
- *			nodeSelectors: { // Optional, A JSON object representing various DOM nodes involved with the 3D carousel
- * 				fallback: '.fallback-message', // Optional, The DOM selector for the fallback message container 
- *				controls: { // Optional, A JSON object representing the DOM nodes of the carousel navigation controllers 
- *					container: '.controls', // Optional, The selector for the controls container
- *					left: '.controls .left', // Optional, The selector for moving the carousel to left  
- *					right: '.controls .right', // Optional, The selector for moving the carousel to right
- *					spinner: '.controls .spin', // Optional, The selector for spining the carousel
- *					cancelSpin: '.controls .cancel' // Optional, The selector for cancelling a spin
- *				},
- *				mask: '.controls .mask' // Optional, The selector for the mask layer if any to hide the controls when spinning
+ *	{
+ * 		avatarIcon: "http://p.ebaystatic.com/aw/pics/s.gif", // Optional, the user avatar icon to display for non supporting users
+ * 															 // If not provided plugin uses default icon http://i.ebayimg.com/00/s/MTEyWDE1MA==/$T2eC16hHJHoE9n3KhWjoBQMcCKc!(w~~60_14.JPG	 
+ *		cameraIcon: "http://thumbs2.ebaystatic.com/pict/1907167068094040_1.jpg", // Optional, the camera icon to display for supporting browsers
+ *															// If not provided plugin uses default icon http://i.ebayimg.com/00/s/NTc1WDU4MA==/$T2eC16Z,!ysE9sy0i2WDBQMcTZp8ew~~60_14.JPG
+ * 		dimension: 70, // Optional, the square dimension of the container element to be made snapable - default value 64px
+ *		url: "/picman/upload.php", // Optional, the REST url end point to persist (save) the image
+ *		imageType: "image/png", // Optional, the type of the image - default value image/png
+ *		callbacks: { // Optional, the callbacks when the image is been uploaded to the server
+ *			successCallback: function() { // Optional, success callback when the image is successfully uploaded
+ *				$('.status').text('Image upload is successful');
+ *			},
+ *			failureCallback: function() { // Optional, failure callback when the image is upload fails
+ *				$('.status').text('Image upload failed');
+ *			},				
+ *			progressCallback: function() { // Optional, progress callback to be executed when the image is being uploaded
+ *				$('.status').text('Image upload WIP');
  *			}
- *		} 	
+ *		},	
+ *		errorSelector: ".error", // Optional, the error DOM selector to be shown when an error occurs - default the error is shown in the container element
+ *      errorMessage: "There was an error connecting to the camera", // Optional, the error message to be displayed in the container when no errorSelector 
+ *      															 // default - Sorry, there was a problem connecting to camera 
+ *		waitMessage: "Please wait..." // Optional, the wait message when user clicks to active camera during a picture upload
+ *									  // default - Please wait until the save is complete
+ *	}
+ *	
  */
 
 /*
@@ -183,7 +187,7 @@
 							+ '</div>'
 		},
 		ERROR_MSG = 'Sorry, there was a problem connecting to camera',
-		WAIT_MSG = 'Please wait until the save is comple',
+		WAIT_MSG = 'Please wait until the save is complete',
 		// Variables to cache DOM
 		maskJElem,
 		videoContainerJElem,
