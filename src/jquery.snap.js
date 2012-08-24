@@ -1,3 +1,54 @@
+/**
+ * snap 
+ *
+ * Copyright 2012, Senthil Padmanabhan
+ * Released under the MIT License
+ *
+ * snap is a JQuery plugin inspired from HTML5 photobooth demo 
+ * http://html5-demos.appspot.com/static/getusermedia/photobooth.html to 
+ * make a DOM element snapable i.e. make the element camera enabled. 
+ * 
+ * It uses navigator.getUserMedia API for supported browsers to access the 
+ * computer's camera and stream the data to video element. Users can then 
+ * click a picture with the provided interface and that image is updated in
+ * the DOM element. If a server URL is provided then the image blob will 
+ * also be posted to the server for saving and persistence.
+ * 
+ * For browsers which do not support navigator.getUserMedia API a default
+ * user avatar icon is displayed. 
+ * 
+ * NOTE: snap plugin depends on a small canvas-to-blob polyfill API 
+ * https://github.com/blueimp/JavaScript-Canvas-to-Blob for browsers which
+ * do not support the canvas element toBlob native function.
+ * 
+ * The plugin also assumes that a body element is present in the page.
+ * 
+ * The various configurations of the plugin.   
+ * 
+ *		{
+ *			imageUrls : ["http:\/\/i.img.one.JPG","http:\/\/i.img.two.JPG"], // Mandatory, the list of image URLs to float in 3D. Order is preserved
+ *			dimensions: {"height":300,"width":400,"offset":40}, // Mandatory, JSON encapsulating the height & width of the image. Optional offset parameter
+ *																   to specify the distance between images. Default value is 40px
+ *			opacityVal : 0.9, // Optional, The opacity (amount of transparency) value that should be used on the images. Default value is 0.9	
+ *		    keyboardEvents: true, // Optional, A flag to enable keyboard controls. Default value is false	
+ *									   Left Arrow => Move left
+ *									   Right Arrow => Move right
+ *									   Enter => Start spin
+ *									   esc => Stop spinning					
+ *			nodeSelectors: { // Optional, A JSON object representing various DOM nodes involved with the 3D carousel
+ * 				fallback: '.fallback-message', // Optional, The DOM selector for the fallback message container 
+ *				controls: { // Optional, A JSON object representing the DOM nodes of the carousel navigation controllers 
+ *					container: '.controls', // Optional, The selector for the controls container
+ *					left: '.controls .left', // Optional, The selector for moving the carousel to left  
+ *					right: '.controls .right', // Optional, The selector for moving the carousel to right
+ *					spinner: '.controls .spin', // Optional, The selector for spining the carousel
+ *					cancelSpin: '.controls .cancel' // Optional, The selector for cancelling a spin
+ *				},
+ *				mask: '.controls .mask' // Optional, The selector for the mask layer if any to hide the controls when spinning
+ *			}
+ *		} 	
+ */
+
 /*
 * JavaScript Canvas to Blob API needed for SNAP
 * https://github.com/blueimp/JavaScript-Canvas-to-Blob
@@ -75,40 +126,8 @@
 }(this));
 
 /**
- * snap 
- *
- * Copyright 2012, Senthil Padmanabhan
- * Released under the MIT License
- * Assumed the page has a body element
- *
- * snap is a JQuery plugin to make a DOM element snapable i.e. make the element
- * camera enabled. It uses navigator.get
- * 
- * The input JSON controls the input feed and the various configurations of
- * the plugin.   
- * 
- *		{
- *			imageUrls : ["http:\/\/i.img.one.JPG","http:\/\/i.img.two.JPG"], // Mandatory, the list of image URLs to float in 3D. Order is preserved
- *			dimensions: {"height":300,"width":400,"offset":40}, // Mandatory, JSON encapsulating the height & width of the image. Optional offset parameter
- *																   to specify the distance between images. Default value is 40px
- *			opacityVal : 0.9, // Optional, The opacity (amount of transparency) value that should be used on the images. Default value is 0.9	
- *		    keyboardEvents: true, // Optional, A flag to enable keyboard controls. Default value is false	
- *									   Left Arrow => Move left
- *									   Right Arrow => Move right
- *									   Enter => Start spin
- *									   esc => Stop spinning					
- *			nodeSelectors: { // Optional, A JSON object representing various DOM nodes involved with the 3D carousel
- * 				fallback: '.fallback-message', // Optional, The DOM selector for the fallback message container 
- *				controls: { // Optional, A JSON object representing the DOM nodes of the carousel navigation controllers 
- *					container: '.controls', // Optional, The selector for the controls container
- *					left: '.controls .left', // Optional, The selector for moving the carousel to left  
- *					right: '.controls .right', // Optional, The selector for moving the carousel to right
- *					spinner: '.controls .spin', // Optional, The selector for spining the carousel
- *					cancelSpin: '.controls .cancel' // Optional, The selector for cancelling a spin
- *				},
- *				mask: '.controls .mask' // Optional, The selector for the mask layer if any to hide the controls when spinning
- *			}
- *		} 	
+ * snap plugin code Starts
+ *  
  */
 !function($, window){	
 	// Mandating ECMAScript 5 strict mode
