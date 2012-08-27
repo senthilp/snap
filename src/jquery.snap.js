@@ -49,7 +49,7 @@
  *		errorSelector: ".error", // Optional, the error DOM selector to be shown when an error occurs - default the error is shown in the container element
  *      errorMessage: "There was an error connecting to the camera", // Optional, the error message to be displayed in the container when no errorSelector 
  *      															 // default - Sorry, there was a problem connecting to camera 
- *		waitMessage: "Please wait..." // Optional, the wait message when user clicks to active camera during a picture upload
+ *		waitMessage: "Please wait..." // Optional, the wait message to be alerted when user clicks to activate camera during a picture upload
  *									  // default - Please wait until the save is complete
  *	}
  *	
