@@ -17,7 +17,7 @@ The snap plugin is pretty simple to invoke
     // Basic, without any options
     $('.avatar').snap();
     
-    // Full loaded, with all options
+    // Fully loaded, with all options
     $('.avatar').snap({
       avatarIcon: "http://p.ebaystatic.com/aw/pics/s.gif",
       cameraIcon: "http://thumbs2.ebaystatic.com/pict/1907167068094040_1.jpg",
