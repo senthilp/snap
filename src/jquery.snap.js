@@ -244,6 +244,7 @@
 							sizeStyle += 'height:' + h + 'px; width:' + w + 'px;';
 						}
 						bigger = w > h?w: h; // Getting the bigger dimension
+						bigger = Math.round(bigger); // rounding to the nearest interger
 						if(DEFAULT_BIGGER_DIMENSION >= bigger) {
 							sizeStyle += 'background-size:' + bigger + 'px;';
 						}
