@@ -162,7 +162,7 @@ $('p.last').snap({
 	<script src="/snap/src/jquery.snap.js"></script>
 	<script>
 		(function() {
-			if(!navigator.getUserMedia || !navigator.webkitGetUserMedia) {
+			if(!navigator.getUserMedia || !navigator.webkitGetUserMedia || !navigator.mozGetUserMedia) {
 				$('.no-support').show();
 			}
 			$('div.avatar').snap();
