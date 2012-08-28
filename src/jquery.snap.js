@@ -140,7 +140,7 @@
 	"use strict";
 	
 	// Retrieving the native APIs
-	navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+	navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
 	window.URL = window.URL || window.webkitURL; 
 	 
 	var DEFAULT_AVATAR_ICON = 'http://i.ebayimg.com/00/s/MTEyWDE1MA==/$T2eC16hHJHoE9n3KhWjoBQMcCKc!(w~~60_14.JPG',
