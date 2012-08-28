@@ -239,7 +239,7 @@
 
 					// If default icon size bigger than container then return the container size
 					if(isDefaultIcon) {
-						if(h === 0 || w === 0) {
+						if(h <= 0 || w <= 0) { // Checking <= 0, since sometimes h or w comes negative
 							h = w = dimension;
 							sizeStyle += 'height:' + h + 'px; width:' + w + 'px;';
 						}
