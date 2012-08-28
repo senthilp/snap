@@ -4,6 +4,9 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title>SNAP</title>
 	<style type="text/css">
+		* {
+			box-sizing: border-box;
+		}
 		html, body {
 			height: 100%;
 		}
@@ -16,7 +19,6 @@
 		h1 {
 			margin: 0;
 			font-size: 36px;
-			text-align: center;
 		}
 		h2 {
 			margin: 0 0 4px;
@@ -26,10 +28,11 @@
 		p {
 			margin: 0;
 		}
-		.main {
+		.main {			
 			width: 910px;
 			margin: 0 auto;			
 			padding-top: 5px;
+			position: relative;
 		}
 		.avatar {
 			height: 100px;
@@ -38,7 +41,12 @@
 			border-radius: 3px;			
 		}
 		.row {
-			margin-top: 40px;
+			margin-top: 35px;
+			padding-bottom: 15px;
+			border-bottom: 1px solid #E8E8E8;
+		}
+		.row:last-child {
+			border-bottom: none;
 		}
 		.clr:after{
 			content: '';
@@ -66,9 +74,11 @@
 		pre {
 			clear: both;
 			margin: 5px 0 0;		
-		}		
+		}	
+		i {
+			color: #BBB;
+		}	
 		.no-support{
-			text-align: center;	
 			font-size: 23px;
 			display: none;
 			margin-top: 10px;					
@@ -82,12 +92,24 @@
 		.right {
 			float: right;
 		}
+		.center {
+			text-align: center;
+		}
+		.separator {
+			position: absolute;
+			height: 70%;
+			top: 95px;
+			left: 50%;
+			border-right: 1px solid #E8E8E8;
+		}
 	</style>
 </head>
 <body>
-	<div class="no-support error">Sorry, your browser does not support webcam. Please try chrome or opera.</div>
-	<div class="main">
-		<h1>snap</h1>
+	<div class="main">		
+		<div class="no-support center error">Sorry, your browser does not support webcam. Please try chrome or opera.</div>
+		<div class="separator"></div>	
+		<h1 class="center">snap</h1>
+		<div class="center"><i>makes any HTML element snapable...</i></div>
 		<div class="row clr">
 			<div class="left">
 				<h2>Click to capture</h2>
@@ -162,7 +184,7 @@ $('p.last').snap({
 	<script src="/snap/src/jquery.snap.js"></script>
 	<script>
 		(function() {
-			if(!navigator.getUserMedia || !navigator.webkitGetUserMedia || !navigator.mozGetUserMedia || !navigator.msGetUserMedia) {
+			if(!(navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia)) {
 				$('.no-support').show();
 			}
 			$('div.avatar').snap();
