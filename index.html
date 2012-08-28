@@ -12,6 +12,7 @@
 			display: -webkit-flex;
 			-webkit-justify-content: center;
 			margin: 0;
+			font-family: Lato,sans-serif;
 		}
 		.main {
 			width: 990px;
@@ -48,9 +49,17 @@
 			height: 0;
 			width: 0;
 		}
+		.no-support{
+			color: #D52A33;
+			text-align: center;	
+			font-size: 23px;
+			display: none;
+			margin-top: 10px;					
+		}
 	</style>
 </head>
 <body>
+	<div class="no-support">Sorry, your browser does not support webcam. Please try chrome or opera.</div>
 	<div class="main">
 		<div class="avatar"></div>
 		<div class="avatar"></div>		
@@ -63,6 +72,9 @@
 	<script src="/snap/src/jquery.snap.js"></script>
 	<script>
 		(function() {
+			if(!navigator.getUserMedia || !navigator.webkitGetUserMedia) {
+				$('.no-support').show();
+			}
 			$('div.avatar').snap();
 			$('p.third').snap({
 				url: "/picman/upload.php",
