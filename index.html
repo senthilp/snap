@@ -8,28 +8,42 @@
 			height: 100%;
 		}
 		body {
-			color: #333;
+			color: #777;
 			display: -webkit-flex;
-			-webkit-justify-content: center;
 			margin: 0;
 			font-family: Lato,sans-serif;
 		}
-		.main {
-			width: 990px;
+		h1 {
+			margin: 0;
+			font-size: 36px;
 			text-align: center;
+		}
+		h2 {
+			margin: 0 0 4px;
+			font-size: 14px;
+			color: #D52A33;
+		}
+		p {
+			margin: 0;
+		}
+		.main {
+			width: 910px;
+			margin: 0 auto;			
 			padding-top: 5px;
 		}
-		@media (min-width: 1200px) {
-			.main {
-				width: 1200px;
-			}
-		}
 		.avatar {
-			height: 120px;
-			width: 120px;
+			height: 100px;
+			width: 100px;
 			border: 1px solid #CCC;
-			border-radius: 3px;
-			margin: 50px auto 0;
+			border-radius: 3px;			
+		}
+		.row {
+			margin-top: 40px;
+		}
+		.clr:after{
+			content: '';
+			display: table;
+			clear: both;
 		}
 		.third {
 			border: none;
@@ -49,23 +63,99 @@
 			height: 0;
 			width: 0;
 		}
+		pre {
+			clear: both;
+			margin: 5px 0 0;		
+		}		
 		.no-support{
-			color: #D52A33;
 			text-align: center;	
 			font-size: 23px;
 			display: none;
 			margin-top: 10px;					
 		}
+		.error {
+			color: red;
+		}
+		.left {
+			float: left;
+		}
+		.right {
+			float: right;
+		}
 	</style>
 </head>
 <body>
-	<div class="no-support">Sorry, your browser does not support webcam. Please try chrome or opera.</div>
+	<div class="no-support error">Sorry, your browser does not support webcam. Please try chrome or opera.</div>
 	<div class="main">
-		<div class="avatar"></div>
-		<div class="avatar"></div>		
-		<p class="avatar third  zero"></p>
-		<div class="error hide">There was a problem with your camera</div>		
-		<p class="avatar last zero"></p>
+		<h1>snap</h1>
+		<div class="row clr">
+			<div class="left">
+				<h2>Click to capture</h2>
+				<div class="avatar"></div>
+				<pre>
+//Default with no options
+$('div.avatar').snap(); 
+				</pre>
+			</div>
+			<div class="right">
+				<div class="right">
+					<h2>Click to capture</h2>
+					<div class="avatar right"></div>
+				</div>
+				<pre>
+//Default with no options
+$('div.avatar').snap(); 
+				</pre>			
+			</div>
+		</div>
+		<div class="row clr">
+			<div class="left">	
+				<h2>Click to capture & save</h2>
+				<p class="avatar third  zero"></p>				
+				<div class="error hide">There was a problem with your camera</div>
+				<pre>
+//With all snap options
+$('p.third').snap({
+	url: "/picman/upload.php",
+	callbacks: {
+		successCallback: function() {
+			$('.status').text('...');
+		},
+		failureCallback: function() {
+			$('.status').text('...');
+		}
+	},		
+	imageType: "image/png",
+	imageType: "image/png",
+	errorSelector: ".error", 
+	waitMessage: "Please wait...",
+	avatarIcon: "http://avatar....",
+	cameraIcon: "http://camera...."
+}); 
+				</pre>				
+			</div>		
+			<div class="right">
+				<div class="right">
+					<h2>Click to capture & save</h2>
+					<p class="avatar last zero right"></p>
+				</div>
+				<pre>
+//With partial options
+$('p.last').snap({
+	url: "/picman/upload.php",
+	dimension: 80,
+	callbacks: {
+		successCallback: function() {
+			$('.status').text('');
+		},				
+		progressCallback: function() {
+			$('.status').text('...');
+		}
+	}	
+}); 
+				</pre>								
+			</div>
+		</div>
 	</div>
 	<div class="status"></div>
 	<script src="/snap/lib/jquery-1.8.0.min.js"></script>
@@ -89,8 +179,8 @@
 				imageType: "image/png",
 				errorSelector: ".error", 
 				waitMessage: "Please wait...",
-				avatarIcon: "http://p.ebaystatic.com/aw/pics/s.gif",
-				cameraIcon: "https://encrypted-tbn3.google.com/images?q=tbn:ANd9GcR28ddZSJaod0XPUODKCyrGbu39R0eEmSOqqVOJtnTIicZgXRM9"
+				avatarIcon: "http://i.ebayimg.com/00/s/MTEyWDE1MA==/$T2eC16hHJHoE9n3KhWjoBQMcCKc!(w~~60_14.JPG",
+				cameraIcon: "http://a2.twimg.com/profile_images/307550174/iphone-camera-icon_bigger.jpg"
 			});
 			$('p.last').snap({
 				url: "/picman/upload.php",
