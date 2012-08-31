@@ -65,6 +65,9 @@
 			font-weight: bold;
 			color: brown;
 		}
+		.status a {
+			font-size: 12px;
+		}
 		.zero {
 			height: 0;
 			width: 0;
@@ -189,8 +192,12 @@ $('p.last').snap({
 			$('p.third').snap({
 				url: "/picman/upload.php",
 				callbacks: {
-					successCallback: function() {
-						$('.status').text('Image upload is successful');
+					successCallback: function(rawData) {
+						var jsonData = JSON.parse(rawData),
+							url = jsonData.data.mainUrl;
+						$('.status').html('Image upload is successful<br/>'
+											+ '<a href="'+ url + '">' 
+											+ url + '</a>');
 					},
 					failureCallback: function() {
 						$('.status').text('Image upload failed');

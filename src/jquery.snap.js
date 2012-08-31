@@ -326,11 +326,11 @@
 			            	if (xhr.status == 200){	            		
 			            		updateImage(masterElem);
 			            		// Call success callback if given
-			            		successCallback && successCallback();
+			            		successCallback && successCallback(xhr.responseText);
 			            	} else {
 			            		noStream({message: 'Call to upload service ' + url + ' failed'}, masterElem);
 			            		// Call failure callback if given
-			            		failureCallback && failureCallback(); 
+			            		failureCallback && failureCallback(xhr.responseText); 
 			            	}
 			            }
 			        };	
