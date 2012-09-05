@@ -190,7 +190,7 @@ $('p.last').snap({
 			}
 			$('div.avatar').snap();
 			$('p.third').snap({
-				url: "/picman/upload.php",
+				url: "/picman/upload.php?picfile=avatar",
 				callbacks: {
 					successCallback: function(rawData) {
 						var jsonData = JSON.parse(rawData),
@@ -210,7 +210,7 @@ $('p.last').snap({
 				cameraIcon: "http://a2.twimg.com/profile_images/307550174/iphone-camera-icon_bigger.jpg"
 			});
 			$('p.last').snap({
-				url: "/picman/upload.php",
+				url: "/picman/upload.php?picfile=avatar",
 				dimension: 80,
 				callbacks: {
 					successCallback: function() {

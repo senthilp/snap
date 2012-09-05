@@ -335,7 +335,7 @@
 			            }
 			        };	
 			        
-			        xhr.open("POST", url + "?picfile=" + fileName, true);
+			        xhr.open("POST", url, true);
 			        // Headers for file upload
 			        xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
 			        xhr.setRequestHeader("X-File-Name", encodeURIComponent(fileName));
