@@ -318,7 +318,10 @@
 				save = function(masterElem) {
 					var xhr = new XMLHttpRequest(),
 						fileName = 'avatar';
-							        
+					
+					// Setting withCredentials as true to allow cookie passing in CORS
+					xhr.withCredentials = true;
+					
 			        xhr.onreadystatechange = function(){
 			            if (xhr.readyState == 4){
 			            	// Reset save state
