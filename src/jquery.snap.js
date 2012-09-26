@@ -3,6 +3,7 @@
  *
  * Copyright 2012, Senthil Padmanabhan
  * Released under the MIT License
+ * http://www.opensource.org/licenses/MIT
  *
  * snap is a JQuery plugin inspired from HTML5 photobooth demo 
  * http://html5-demos.appspot.com/static/getusermedia/photobooth.html to 
