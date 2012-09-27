@@ -553,7 +553,9 @@
 				var jElem = $(this);
 				// Do feature deduction and if not avilable set auto-avatar and return
 				if(typeof n.getUserMedia == "undefined") {					
-					jElem.attr('style', 'background:' + getBackgroundStyle(avatarIcon) + ';' + getIconBgSizeStyle(jElem));
+					jElem.attr('style', getIconBgSizeStyle(jElem));
+					// Adding background style separately for IE7 & IE8, since style setting doesn't work
+					jElem.css('background', getBackgroundStyle(avatarIcon));
 					return;
 				}
 				// Initinalize snap
