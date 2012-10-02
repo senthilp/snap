@@ -369,6 +369,9 @@
 				capture = function(masterElem) {					
 					// unbinding click event
 					$(masterElem).unbind('click', initCamera);
+					// Setting the canvas height & width before taking the shot
+					canvasElem.height = videoElem.videoHeight;
+					canvasElem.width = videoElem.videoWidth;
 					// Draw image from context
 					canvasCtx.drawImage(videoElem, 0, 0);
 					// Check if persistence is needed and save the image
@@ -463,9 +466,6 @@
 							// Show the mask & video container
 							maskJElem.show();
 							videoContainerJElem.show();
-							// Setting the canvas
-							canvasElem.height = videoElem.videoHeight;
-							canvasElem.width = videoElem.videoWidth;
 						};
 					
 					// Creating a dummy stop function on stream to avoid Opera errors
