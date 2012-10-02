@@ -219,7 +219,7 @@
 				url = window.dataURLtoBlob && lConfig.url, // Check if blob supported
 				imageType = lConfig.imageType || IMAGE_TYPE,
 				getBackgroundStyle = function(imageUrl) {
-					return 'url(\''+ imageUrl + '\') no-repeat 50% 50%';
+					return 'url(\''+ imageUrl + '\')';
 				},
 				/**
 			     * Retrieves the background image size of the icon image based on the container dimensions 
@@ -371,7 +371,7 @@
 					$(masterElem).unbind('click', initCamera);
 					// Setting the canvas height & width before taking the shot
 					canvasElem.height = videoElem.videoHeight;
-					canvasElem.width = videoElem.videoWidth;
+					canvasElem.width = videoElem.videoWidth;					
 					// Draw image from context
 					canvasCtx.drawImage(videoElem, 0, 0);
 					// Check if persistence is needed and save the image
@@ -401,7 +401,7 @@
 					imgSrc = canvasElem.toDataURL(imageType);
 
 					// Set the style to have image as background
-					masterJClone.css('background', getBackgroundStyle(imgSrc));
+					masterJClone.css('background-image', getBackgroundStyle(imgSrc));
 					masterJClone.css('background-size', w + 'px');
 					// Empty text if any
 					masterJClone.text('');
@@ -424,7 +424,7 @@
 				updateText = function(elem, text, isError) {
 					var jElem = $(elem);
 					jElem.text(text);
-					jElem.css('background', 'none');
+					jElem.css('background-image', 'none');
 					jElem.css('cursor', 'pointer');
 					isError && jElem.css('color', 'red');
 				},
@@ -539,11 +539,10 @@
 			     * 
 			     * @private
 			     */					
-				init = function(jElem) {
-					var icon = 'background:' + getBackgroundStyle(cameraIcon) + '; cursor:pointer;' + getIconBgSizeStyle(jElem); 
-					
+				init = function(jElem) { 					
 					// Setting the camera icon style
-					jElem.attr('style', icon);
+					jElem.css('background-image', getBackgroundStyle(cameraIcon));
+					jElem.css('cursor', 'pointer');
 
 					// Attaching events
 					jElem.click(initCamera);
@@ -551,11 +550,14 @@
 			
 			return this.each(function() {
 				var jElem = $(this);
+				// Setting the default background styles
+				jElem.attr('style', getIconBgSizeStyle(jElem));
+				jElem.css('background-position', '50% 50%');
+				jElem.css('background-repeat', 'no-repeat');
 				// Do feature deduction and if not avilable set auto-avatar and return
-				if(typeof n.getUserMedia == "undefined") {					
-					jElem.attr('style', getIconBgSizeStyle(jElem));
+				if(typeof n.getUserMedia == "undefined") {										
 					// Adding background style separately for IE7 & IE8, since style setting doesn't work
-					jElem.css('background', getBackgroundStyle(avatarIcon));
+					jElem.css('background-image', getBackgroundStyle(avatarIcon));
 					return;
 				}
 				// Initinalize snap
