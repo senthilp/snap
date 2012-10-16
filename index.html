@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Snap : snap is a JQuery plugin that leverages navigator.getUserMedia to capture pictures &amp; videos from a browser" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Snap</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/senthilp/snap">View on GitHub</a>
+
+          <h1 id="project_title">Snap</h1>
+          <h2 id="project_tagline">snap is a JQuery plugin that leverages navigator.getUserMedia to capture pictures &amp; videos from a browser</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/senthilp/snap/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/senthilp/snap/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>snap</h1>
+
+<p>snap is a JQuery plugin inspired from HTML5 <a href="http://html5-demos.appspot.com/static/getusermedia/photobooth.html">photobooth demo</a> 
+to make a DOM element snapable i.e. make the element camera enabled. It uses <strong>navigator.getUserMedia</strong> API for 
+supported browsers to access the computer's camera and stream the data to video element. Users can then click a picture 
+with the provided interface and that image is updated in the DOM element. If a server URL is provided then the image 
+blob will also be posted to the server for saving and persistence.</p>
+
+<p>For browsers which do not support navigator.getUserMedia API a default user avatar icon is displayed. The plugin also 
+assumes that a body element is present in the page. Please refer to <a href="https://github.com/senthilp/snap/blob/master/index.html">index.html</a> 
+for a working demo.</p>
+
+<p><strong>NOTE:</strong> snap plugin depends on a small <a href="https://github.com/blueimp/JavaScript-Canvas-to-Blob"><strong>canvas-to-blob</strong></a> polyfill 
+API for browsers which do not support the canvas element toBlob native function. The API is included in the plugin itself.</p>
+
+<p>The snap plugin is pretty simple to invoke</p>
+
+<pre><code>// Basic, without any options
+$('.avatar').snap();
+
+// Fully loaded, with all options
+$('.avatar').snap({
+  avatarIcon: "http://p.ebaystatic.com/aw/pics/s.gif",
+  cameraIcon: "http://thumbs2.ebaystatic.com/pict/1907167068094040_1.jpg",
+  dimension: 70,
+  url: "/picman/upload.php",
+  imageType: "image/png",
+  callbacks: {
+    successCallback: function() {
+      $('.status').text('Image upload is successful');
+    },
+    failureCallback: function() {
+      $('.status').text('Image upload failed');
+    },
+    progressCallback: function() {
+      $('.status').text('Image upload WIP');
+    }
+  },    
+  errorSelector: ".error", 
+  errorMessage: "There was an error connecting to the camera",
+  waitMessage: "Please wait..."
+});
+</code></pre>
+
+<h2>Options</h2>
+
+<h3>avatarIcon</h3>
+
+<p><strong>Optional</strong>
+<br>
+The user avatar icon to display for non supporting browsers, if not provided plugin uses <a href="http://i.ebayimg.com/00/s/MTEyWDE1MA==/%24T2eC16hHJHoE9n3KhWjoBQMcCKc!(w%7E%7E60_14.JPG">default</a> 
+user icon </p>
+
+<h3>cameraIcon</h3>
+
+<p><strong>Optional</strong>
+<br>
+The camera icon to display for supporting browsers, If not provided plugin uses <a href="http://i.ebayimg.com/00/s/NTc1WDU4MA==/%24T2eC16Z,!ysE9sy0i2WDBQMcTZp8ew%7E%7E60_14.JPG">default</a> 
+camera icon</p>
+
+<h3>dimension</h3>
+
+<p><strong>Optional</strong>
+<br>
+The square dimension of the container element to be made snapable, default value 64px</p>
+
+<h3>url</h3>
+
+<p><strong>Optional</strong>
+<br>
+The REST url end point to persist (save) the image</p>
+
+<h3>imageType</h3>
+
+<p><strong>Optional</strong>
+<br>
+The type of the image, default value image/png</p>
+
+<h3>callbacks</h3>
+
+<p><strong>Optional</strong>
+<br>
+a JSON for callbacks when the image is been uploaded to the server</p>
+
+<h3>successCallback</h3>
+
+<p><strong>Optional</strong>
+<br>
+Success callback when the image is successfully uploaded</p>
+
+<h3>failureCallback</h3>
+
+<p><strong>Optional</strong>
+<br>
+Failure callback when the image is upload fails</p>
+
+<h3>progressCallback</h3>
+
+<p><strong>Optional</strong>
+<br>
+Progress callback to be executed when the image is being uploaded</p>
+
+<h3>errorSelector</h3>
+
+<p><strong>Optional</strong>
+<br>
+The error DOM selector to be shown when an error occurs, default the error is shown in the container element</p>
+
+<h3>errorMessage</h3>
+
+<p><strong>Optional</strong>
+<br>
+The error message to be displayed in the container when no errorSelector, default "Sorry, there was a problem connecting to camera"</p>
+
+<h3>waitMessage</h3>
+
+<p><strong>Optional</strong>
+<br>
+the wait message to be alerted when user clicks to activate camera during a picture upload, default "Please wait until 
+the save is complete"</p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Snap maintained by <a href="https://github.com/senthilp">senthilp</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
