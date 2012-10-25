@@ -106,10 +106,10 @@
                 mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
                 // Write the ArrayBuffer to a blob:
                 if (hasBlobConstructor) {
-                    return new Blob([arrayBuffer], {type: mimeString});
+                    return new Blob([intArray], {type: mimeString});
                 }
                 bb = new BlobBuilder();
-                bb.append(arrayBuffer);
+                bb.append(intArray);
                 return bb.getBlob(mimeString);
             };
     if (window.HTMLCanvasElement && !CanvasPrototype.toBlob) {
@@ -449,7 +449,7 @@
 						$(errorSelector).show();
 					} else {
 						// Fill the error & update the master element
-						updateText(masterElem, err.message || errorMessage, true)
+						updateText(masterElem, err.message || errorMessage, true);
 					}
 				},			
 				/**
